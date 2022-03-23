@@ -1,0 +1,50 @@
+GREEN = \033[32m
+BLUE = \033[34m
+YELLOW = \e[0;33m
+RESET = \033[0m
+
+CC = clang
+
+CFLAGS = -Wall -Wextra -Werror -g
+
+INC = -Ilibft/
+
+LIBS = -Llibft -lft
+
+SERVER = server
+SRCS_SERVER = ./server.c
+OBJS_SERVER = $(SRCS_SERVER:.c=.o)
+
+CLIENT = client
+SRCS_CLIENT = ./client.c
+OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+
+all: $(CLIENT) $(SERVER)
+	@echo "$(GREEN)Minitalk is ready to run! :)$(RESET)"
+
+.c.o:
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+
+$(CLIENT): $(OBJS_CLIENT)
+	@$(MAKE) -sC libft
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+	@echo "$(BLUE)Client is ready!$(RESET)"
+
+$(SERVER): $(OBJS_SERVER)
+	@$(MAKE) -sC libft
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+	@echo "$(BLUE)Server is ready!$(RESET)"
+
+clean:
+	@$(MAKE) -sC libft clean
+	@rm -f $(OBJS_CLIENT) $(OBJS_SERVER)
+
+fclean: 
+	@$(MAKE) -sC libft fclean
+	@rm -f $(OBJS_CLIENT) $(OBJS_SERVER)
+	@rm -f $(CLIENT) $(SERVER)
+
+re: fclean all
+
+.PHONY: all clean fclean re
